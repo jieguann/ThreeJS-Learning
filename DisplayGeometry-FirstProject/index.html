@@ -8,31 +8,40 @@
     </body>
 </html>
 <script>    
-    let scene, camera, renderer;
-    let donuts = [];
+    let scene, camera, renderer, cube, sphereCentre,torus;
     let ADD;
     //set Geometry
     //let cube;
-    
-    //Random int between min and max
-    function getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    let createCube = function(){
+        let geometry = new THREE.BoxGeometry(1, 1, 1);
+        let material = new THREE.MeshBasicMaterial({color: 0x33ccff});
+        cube = new THREE.Mesh(geometry, material);
+
+        scene.add(cube);
+    };
+
+    //create sphere 
+    let createSphere = function(){
+        let geometry = new THREE.SphereGeometry(0.8, 30, 30);
+        let material = new THREE.MeshBasicMaterial({color: 0xccccff});
+        sphereCentre = new THREE.Mesh(geometry, material);
+        sphereCentre.position.set(0, 0, 0);
+        scene.add(sphereCentre);
+    };
+
     //create torus geometry
     let createTorus = function(){
-        let geometry = new THREE.TorusGeometry(0.2, 0.1, 30, 30);
-        let material = new THREE.MeshBasicMaterial({color: 0xccffcc * Math.random()});
-        let torus = new THREE.Mesh(geometry, material);
-        torus.position.set(getRandomInt(-15,15), 2, getRandomInt(-2,2));
-
+        let geometry = new THREE.TorusGeometry(1.5, 0.5, 30, 30);
+        let material = new THREE.MeshBasicMaterial({color: 0xccffcc});
+        torus = new THREE.Mesh(geometry, material);
+        torus.position.set(0, 0, 0);
         scene.add(torus);
-        donuts.push(torus);
     };
     // set up the environment - 
     // initiallize scene, camera, objects and renderer
     let init = function() {
         //Add value
-        ADD = 1;
+        ADD = 0.05;
         // 1. create the scene
         scene = new THREE.Scene();
         scene.background = new THREE.Color("rgb(161, 51, 255)");
@@ -46,8 +55,9 @@
         //scene.add(axes);
         // 3. create and locate the objects on the scene
         
-        
-        
+        createCube();
+        createSphere();
+        createTorus();
         //cube.position.x = -2;
         // 4. create the renderer   
         renderer = new THREE.WebGLRenderer();
@@ -58,21 +68,16 @@
 
     // main animation loop - calls every 50-60 ms.
     let mainLoop = function() {
+        cube.position.x += ADD;
+        cube.rotation.x += ADD/3;
+        sphereCentre.position.y += ADD;
+        torus.rotation.x += 0.01;
+        torus.rotation.y += 0.01;
         
-        //torus.rotation.x += 0.01;
-        //torus.rotation.y += 0.01;
-        if(Math.random() > 0.9){
-            createTorus();
-        }
-        //createTorus();
-        
-        //donuts move in the y-axis
-        for(let i = 0; i < donuts.length; i++){
-            donuts[i].position.y -= 0.01;
-            donuts[i].rotation.x += 0.01;
+        if(cube.position.x >=3 || cube.position.x <= -3){
+            ADD = -ADD;
         }
 
-        
         renderer.render(scene, camera);
         requestAnimationFrame(mainLoop);
     };
