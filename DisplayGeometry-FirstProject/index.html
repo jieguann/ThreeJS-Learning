@@ -8,7 +8,7 @@
     </body>
 </html>
 <script>    
-    let scene, camera, renderer, cube;
+    let scene, camera, renderer, cube, sphereCentre,torus;
     let ADD;
     //set Geometry
     //let cube;
@@ -24,9 +24,18 @@
     let createSphere = function(){
         let geometry = new THREE.SphereGeometry(0.8, 30, 30);
         let material = new THREE.MeshBasicMaterial({color: 0xccccff});
-        let sphere = new THREE.Mesh(geometry, material);
-        sphere.position.set(0, 0, 0);
-        scene.add(sphere);
+        sphereCentre = new THREE.Mesh(geometry, material);
+        sphereCentre.position.set(0, 0, 0);
+        scene.add(sphereCentre);
+    };
+
+    //create torus geometry
+    let createTorus = function(){
+        let geometry = new THREE.TorusGeometry(1.5, 0.5, 30, 30);
+        let material = new THREE.MeshBasicMaterial({color: 0xccffcc});
+        torus = new THREE.Mesh(geometry, material);
+        torus.position.set(0, 0, 0);
+        scene.add(torus);
     };
     // set up the environment - 
     // initiallize scene, camera, objects and renderer
@@ -48,6 +57,7 @@
         
         createCube();
         createSphere();
+        createTorus();
         //cube.position.x = -2;
         // 4. create the renderer   
         renderer = new THREE.WebGLRenderer();
@@ -60,6 +70,10 @@
     let mainLoop = function() {
         cube.position.x += ADD;
         cube.rotation.x += ADD/3;
+        sphereCentre.position.y += ADD;
+        torus.rotation.x += 0.01;
+        torus.rotation.y += 0.01;
+        
         if(cube.position.x >=3 || cube.position.x <= -3){
             ADD = -ADD;
         }
